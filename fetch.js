@@ -10,6 +10,9 @@ async function getUserAchievements(uid, appID) {
     return achievements;
   } catch (error) {
     console.error(`Error fetching achievements for appID ${appID}: ${error}`);
+    if (error.toString().toLowerCase().includes('forbidden')) {
+      return 'forbidden';
+    }
     return null;
   }
 }
@@ -35,7 +38,7 @@ async function main() {
 
     const achievementsPromises = stats.map(async (game) => {
       const achievementsData = await getUserAchievements(uid, game.appID);
-      if (!achievementsData) {
+      if (!achievementsData || achievementsData === 'forbidden') {
         return null;
       }
 
