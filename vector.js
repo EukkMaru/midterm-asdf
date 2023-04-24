@@ -43,7 +43,7 @@ async function main() {
     ];
 
     // Call the Python script
-    const pythonProcess = spawn('python', ['vector_processing.py', ...unitVector]);
+    const pythonProcess = spawn('python3', ['vector_processing.py', ...unitVector]);
 
     pythonProcess.stdout.on('data', (data) => {
       console.log(`Python output: ${data}`);

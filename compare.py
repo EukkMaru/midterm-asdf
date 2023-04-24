@@ -13,5 +13,5 @@ def user_vector (count_cluster):
         cluster_ratio[i-1] = count_cluster[i-1]/total
     return cluster_ratio
 
-count_cluster = count(user_game)
+count_cluster = count()
 cluster_ratio = user_vector(count_cluster)
