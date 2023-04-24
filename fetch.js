@@ -25,15 +25,8 @@ function calculateAchievementRate(achievements) {
   return (completedAchievements / totalAchievements) * 100;
 }
 
-// Main function
-async function main() {
-  if (!process.argv[2]) {
-    console.error('Error: No user ID provided');
-    return;
-  }
-
+async function getUserData(uid) {
   try {
-    const uid = process.argv[2];
     const stats = await steam.getUserOwnedGames(uid);
 
     const achievementsPromises = stats.map(async (game) => {
@@ -67,11 +60,48 @@ async function main() {
       return acc;
     }, {});
 
-    const outputData = { [uid]: achievementsByAppID };
-    fs.writeFileSync('./data.json', JSON.stringify(outputData, null, 2));
+    return { [uid]: achievementsByAppID };
+  } catch (error) {
+    console.error(`Error fetching user-owned games: ${error}`);
+    return null;
+  }
+}
+
+// Main function
+async function main() {
+  if (!process.argv[2]) {
+    console.error('Error: No user ID provided');
+    return;
+  }
+
+  try {
+    const uid = process.argv[2];
+    const newUserData = await getUserData(uid);
+
+    // Read the existing data from the JSON file
+    let existingData;
+    try {
+      existingData = JSON.parse(fs.readFileSync('./data.json', 'utf8'));
+    } catch (error) {
+      console.log('Creating a new JSON file.');
+      existingData = {};
+    }
+
+    // Update the existing data with the new user data
+    const updatedData = {
+      ...existingData,
+      ...newUserData,
+    };
+
+    // Write the updated data to the JSON file
+    fs.writeFileSync('./data.json', JSON.stringify(updatedData, null, 2));
   } catch (error) {
     console.error(`Error fetching user-owned games: ${error}`);
   }
 }
 
 main();
+
+module.exports = {
+  getUserData,
+};
