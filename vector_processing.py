@@ -33,7 +33,9 @@ unit_vector = [float(x) for x in sys.argv[1:]]
 population_file = 'population.json'
 most_similar_user, max_similarity = most_similar_vector(unit_vector, population_file)
 
-subprocess.run(["node", "recommend.js", most_similar_user, str(max_similarity)])
+result = {"most_similar_user": most_similar_user, "max_similarity": max_similarity}
+print(json.dumps(result))
+#subprocess.run(["node", "recommend.js", most_similar_user, str(max_similarity)])
 
 # with open('./population.json') as file:
 #     population = json.load(file)
